@@ -1,1 +1,7 @@
-.navbar { padding: .75rem; border-bottom: 1px solid #ccc; }
+.no-scrollbar {
+	scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
