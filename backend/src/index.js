@@ -9,6 +9,7 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/mydb";
 
 let db;
 
+
 (async () => {
   const client = new MongoClient(MONGO_URI, { maxPoolSize: 10 });
   await client.connect();

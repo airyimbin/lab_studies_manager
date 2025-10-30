@@ -11,7 +11,7 @@ function App() {
   }, []);
 
   const addItem = async () => {
-    const name = prompt("New item testing name?");
+    const name = prompt("New item tesasting name?");
     if (!name) return;
     await fetch("/api/items", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
     const updated = await fetch("/api/items").then(r => r.json());
