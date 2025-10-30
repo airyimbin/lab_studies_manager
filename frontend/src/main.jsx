@@ -11,7 +11,7 @@ function App() {
   }, []);
 
   const addItem = async () => {
-    const name = prompt("New itemasfd name?");
+    const name = prompt("New item testing name?");
     if (!name) return;
     await fetch("/api/items", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
     const updated = await fetch("/api/items").then(r => r.json());
@@ -20,7 +20,7 @@ function App() {
 
   return (
     <div style={{ fontFamily: "system-ui", padding: 24 }}>
-      <h1>Test</h1>
+      <h1>Testing</h1>
       <p>API saysasdf: <strong>{hello}</strong></p>
       <button onClick={addItem}>Add item</button>
       <pre>{JSON.stringify(items, null, 2)}</pre>
