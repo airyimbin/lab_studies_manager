@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
 
-const MONGO_URI = new MongoClient(process.env.MONGODB_URI||"mongodb://localhost:27017/mydb");
+const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/labdb";
 let db;
 
 export async function connectDB() {
