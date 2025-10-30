@@ -216,3 +216,182 @@ frontend/node_modules/
 
 .gitignore~
 ..gitignore.un~
+
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# dotenv environment files (security!)
+.env
+.env.*
+!.env.example
+
+# Coverage directories
+coverage/
+.nyc_output/
+
+# Build output
+dist/
+build/
+out/
+tmp/
+temp/
+
+# TypeScript cache & build
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Database artifacts (MongoDB local dev)
+dump/
+*.bson
+*.mongodump
+*.json
+
+# Build output
+/build
+/.expo
+.next/
+out/
+storybook-static/
+
+# Local env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Cache
+.cache/
+.eslintcache
+.parcel-cache/
+vite.config.ts.timestamp*
+vite.config.js.timestamp*
+
+# Generated files
+*.map
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.idea/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IntelliJ / WebStorm / JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime
+*.sublime-workspace
+*.sublime-project
+
+# Vim
+*.swp
+*.swo
+*.swm
+*.sw?
+*~
+
+# Nano
+*.save
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+docker-compose.override.yml
+.docker/*
+Dockerfile.dev
+
+# Build & package managers
+.pnpm-store/
+.bazel/
+lerna-debug.log
+.pnpm-debug.log
+.bower_components/
+
+/jest-cache/
+/jest-results/
+test-results.json
+cypress/videos/
+cypress/screenshots/
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+.yarn-integrity
+
+# ESLint / Prettier / Stylelint
+.eslintcache
+.prettier-cache
+.stylelintcache
+
+# Local secrets
+*.pem
+*.key
+*.crt
+*.pfx
+
+# Local dev tools
+*.local
+*.dev
+.cache/
+.history/
+
+firebase-debug.log
+google-services.json
+GoogleService-Info.plist
+
+# Backups
+*.bak
+*.backup
+
+# Compressed files
+*.tgz
+*.zip
+*.rar
+*.tar
+*.7z
+
+# Temp directories
+scratch/
+temp/
+tmp/
