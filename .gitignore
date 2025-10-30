@@ -1,3 +1,17 @@
+# Vim swap files
+*.swp
+*.swo
+*.swn
+
+# Vim backup files
+*~
+
+# Vim session files
+Session.vim
+
+# Netrw history file
+.netrwhist
+
 # Logs
 logs
 *.log
