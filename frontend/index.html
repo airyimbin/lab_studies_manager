@@ -1,8 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta charset="UTF-8"/><title>VEM</title></head>
-<body>
+<head><meta charset="UTF-8"/><title>Lab Studies Manager</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+        },
+        boxShadow: {
+          soft: '0 10px 25px -10px rgba(0,0,0,0.2)',
+        },
+      },
+    },
+  }
+</script>
+</head>
+<body class="bg-gray-50 text-gray-900">
   <div id="root"></div>
   <script type="module" src="/src/index.jsx"></script>
+  <style>
+  html, body, #root { height: 100%; }
+  </style>
 </body>
 </html>

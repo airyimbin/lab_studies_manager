@@ -94,12 +94,13 @@ export default function App() {
   );
 
   const ActiveComponent = route.Component;
+  const componentProps = { ...params, navigate };
 
   return (
     <>
       <NavBar currentPath={currentPath} onNavigate={navigate} />
       <main className="container">
-        <ActiveComponent {...params} />
+        <ActiveComponent {...componentProps} />
       </main>
     </>
   );
