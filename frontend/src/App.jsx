@@ -5,6 +5,9 @@ import Dashboard from "./components/Dashboard.jsx";
 import ParticipantsList from "./components/ParticipantsList.jsx";
 import ParticipantDetail from "./components/ParticipantDetail.jsx";
 import StudiesList from "./components/StudiesList.jsx";
+import StudiesDetail from "./components/StudiesDetail.jsx";
+import SessionsList from "./components/SessionsList.jsx";
+import SessionsDetail from "./components/SessionsDetail.jsx";
 
 export default function App() {
   return (
@@ -16,6 +19,9 @@ export default function App() {
           <Route path="/participants" element={<ParticipantsList />} />
           <Route path="/participants/:id" element={<ParticipantDetail />} />
           <Route path="/studies" element={<StudiesList />} />
+          <Route path="/studies/:id" element={<StudiesDetail />} />
+          <Route path="/sessions" element={<SessionsList />} />
+          <Route path="/sessions/:id" element={<SessionsDetail />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
