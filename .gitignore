@@ -261,7 +261,6 @@ tsconfig.tsbuildinfo
 dump/
 *.bson
 *.mongodump
-*.json
 
 # Build output
 /build
