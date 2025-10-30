@@ -21,7 +21,7 @@ function App() {
   return (
     <div style={{ fontFamily: "system-ui", padding: 24 }}>
       <h1>Testing</h1>
-      <p>API testing the test: <strong>{hello}</strong></p>
+      <p>API saysasdf: <strong>{hello}</strong></p>
       <button onClick={addItem}>Add item</button>
       <pre>{JSON.stringify(items, null, 2)}</pre>
     </div>
