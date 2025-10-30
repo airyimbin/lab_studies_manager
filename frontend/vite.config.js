@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: "0.0.0.0",
+    allowedHosts: ['projectfinal.timyim.info'],
     port: 5173,
     proxy: {
       "/api": { target: "http://localhost:3000", changeOrigin: true }
