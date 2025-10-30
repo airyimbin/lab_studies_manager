@@ -8,6 +8,7 @@ import StudiesList from "./components/StudiesList.jsx";
 import StudiesDetail from "./components/StudiesDetail.jsx";
 import SessionsList from "./components/SessionsList.jsx";
 import SessionsDetail from "./components/SessionsDetail.jsx";
+import Login from "./components/Login.jsx";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/studies/:id" element={<StudiesDetail />} />
           <Route path="/sessions" element={<SessionsList />} />
           <Route path="/sessions/:id" element={<SessionsDetail />} />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
