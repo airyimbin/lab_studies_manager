@@ -1,0 +1,1 @@
+export default function StudiesList(){return <h1>Studies</h1>}

@@ -1,0 +1,1 @@
+export default function ParticipantDetail(){return <h1>Participant Detail</h1>}
