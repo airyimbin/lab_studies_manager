@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   app:
     build: .
@@ -21,5 +20,14 @@ services:
       - /app/frontend/node_modules
       - ./cloudflared:/app/cloudflared
       - mongo-data:/data/db
+      - npm-global:/usr/local/lib/node_modules
+      - apt-lib:/var/lib/apt
+      - apt-cache:/var/cache/apt
+      - dpkg:/var/lib/dpkg
+
 volumes:
   mongo-data:
+  npm-global:
+  apt-lib:
+  apt-cache:
+  dpkg:
