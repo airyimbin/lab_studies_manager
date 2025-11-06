@@ -45,6 +45,9 @@ export default function NavBar({ currentPath = "/", onNavigate = () => {} }) {
               onClick={(event) => {
                 event.preventDefault();
                 onNavigate(path);
+                if (typeof window !== "undefined") {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
               }}
               aria-current={isActive ? "page" : undefined}
             >

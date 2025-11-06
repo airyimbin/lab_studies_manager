@@ -99,7 +99,7 @@ export default function App() {
   return (
     <>
       <NavBar currentPath={currentPath} onNavigate={navigate} />
-      <main className="container">
+      <main className="">
         <ActiveComponent {...componentProps} />
       </main>
     </>

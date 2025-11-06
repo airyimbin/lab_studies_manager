@@ -1,5 +1,6 @@
 {
   "name": "single-container-backend",
+  "license": "MIT",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -7,7 +8,7 @@
     "dev": "nodemon --watch src --ext js,mjs,json src/index.js"
   },
   "dependencies": {
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "mongodb": "^6.20.0"
   },
