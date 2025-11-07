@@ -1,5 +1,7 @@
 // src/utils/api.js
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = import.meta.env.DEV
+  ? "/api"
+  : (import.meta.env.VITE_API_BASE || "/api");
 
 // --- GET helper ---
 export async function apiGet(path) {
@@ -10,7 +12,9 @@ export async function apiGet(path) {
   let data = null;
   try {
     data = await res.json();
-  } catch {}
+  } catch (e) {
+    void e;
+  }
 
   if (!res.ok) {
     const msg =
@@ -35,7 +39,9 @@ export async function apiJson(path, method, body) {
   let data = null;
   try {
     data = await res.json();
-  } catch {}
+  } catch (e) {
+    void e;
+  }
 
   if (!res.ok) {
     const msg =
