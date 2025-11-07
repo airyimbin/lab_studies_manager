@@ -67,7 +67,7 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
-  const { title, tags, description } = req.body || {};
+  const { title, tags, description, status } = req.body || {};
   const now = new Date();
 
   let objectId;
@@ -76,6 +76,11 @@ router.put("/:id", async (req, res) => {
   } catch {
     return res.status(400).json({ error: "Invalid ID format" });
   }
+
+  const cleanStatus =
+    typeof status === "string" && ["active", "draft", "archived"].includes(status.trim().toLowerCase())
+      ? status.trim().toLowerCase()
+      : undefined; // ✅ prevents bad values
 
   try {
     const updateResult = await col().updateOne(
@@ -87,6 +92,7 @@ router.put("/:id", async (req, res) => {
             ? tags.map((t) => t.trim()).filter(Boolean)
             : [],
           description: description?.trim() || "",
+          ...(cleanStatus && { status: cleanStatus }), // ✅ update only if provided
           updatedAt: now,
         },
       }
@@ -96,7 +102,6 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ error: "Study not found" });
     }
 
-    // Fetch updated document manually to return
     const updatedDoc = await col().findOne({ _id: objectId });
     res.json(updatedDoc);
   } catch (err) {

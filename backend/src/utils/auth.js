@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 const COOKIE_NAME = "lsm_token";
 const DAY = 24 * 60 * 60 * 1000;
-const JWT_SECRET = process.env.JWT_SECRET || "dev-insecure-secret-change-me";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // --- Build signed JWT payload ---
 function signToken(user) {

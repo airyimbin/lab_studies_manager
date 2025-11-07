@@ -12,6 +12,7 @@ export default function StudiesDetail({ id, navigate }) {
     title: "",
     tags: "",
     description: "",
+    status: "draft",
   });
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function StudiesDetail({ id, navigate }) {
           title: data.title || "",
           tags: data.tags?.join(", ") || "",
           description: data.description || "",
+          status: data.status || "draft",
         });
         setError(null);
       } catch (err) {
@@ -42,7 +44,9 @@ export default function StudiesDetail({ id, navigate }) {
     setSaving(true);
 
     const payload = {
-      ...editForm,
+      title: editForm.title,
+      description: editForm.description,
+      status: editForm.status, // ✅ Include status update
       tags: editForm.tags
         .split(",")
         .map((t) => t.trim())
@@ -158,6 +162,24 @@ export default function StudiesDetail({ id, navigate }) {
                   }
                   placeholder="vision, perception"
                 />
+              </div>
+
+              {/* ✅ STATUS FIELD */}
+              <div>
+                <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+                  Status
+                </label>
+                <select
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
+                  value={editForm.status}
+                  onChange={(e) =>
+                    setEditForm((f) => ({ ...f, status: e.target.value }))
+                  }
+                >
+                  <option value="active">Active</option>
+                  <option value="draft">Draft</option>
+                  <option value="archived">Archived</option>
+                </select>
               </div>
 
               <div>
