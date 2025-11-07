@@ -59,7 +59,8 @@ export default function SessionsList({ navigate }) {
     const now = new Date();
     return sessions.filter((s) => {
       const created = new Date(s.createdAt);
-      if (filter === "New") return (now - created) / (1000 * 60 * 60 * 24) <= 7;
+      if (filter === "New")
+        return (now - created) / (1000 * 60 * 60 * 24) <= 7;
       if (filter === "This Week") {
         const start = new Date(now);
         start.setDate(now.getDate() - now.getDay());
@@ -98,14 +99,13 @@ export default function SessionsList({ navigate }) {
   };
 
   const markStatus = async (id, status) => {
-    if (status === "Cancelled" && !window.confirm("Cancel this session?"))
-      return;
+    if (status === "Cancelled" && !window.confirm("Cancel this session?")) return;
     await apiJson(`/sessions/${id}`, "PUT", { status });
     fetchSessions();
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">  {/* ✅ centered container */}
+    <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-8">
         <div>
@@ -204,42 +204,47 @@ export default function SessionsList({ navigate }) {
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="mt-6 flex items-center justify-between text-sm">
-        <div>
+      {/* ✅ NEW PAGINATION UI */}
+      <div className="mt-10 flex flex-col sm:flex-row items-center justify-between text-sm gap-4">
+        <div className="text-gray-700">
           Showing {(page - 1) * PAGE_SIZE + 1}–
           {Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length}
         </div>
-        <div className="flex gap-2 items-center">
+
+        <div className="flex flex-wrap justify-center gap-2">
           <button
             disabled={page === 1}
             onClick={() => changePage(page - 1)}
-            className="px-2 py-1 text-gray-700 border rounded disabled:opacity-40"
+            className="px-3 py-1.5 border rounded-md text-gray-600 disabled:opacity-40 hover:bg-gray-50"
           >
             Prev
           </button>
+
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
               onClick={() => changePage(p)}
-              className={`px-2 py-1 border rounded ${
-                page === p ? "bg-indigo-600 text-white" : "text-gray-700"
+              className={`px-3 py-1.5 border rounded-md ${
+                page === p
+                  ? "bg-indigo-600 text-white border-indigo-600"
+                  : "text-gray-700 hover:bg-gray-50"
               }`}
             >
               {p}
             </button>
           ))}
+
           <button
             disabled={page === totalPages}
             onClick={() => changePage(page + 1)}
-            className="px-2 py-1 text-gray-700 border rounded disabled:opacity-40"
+            className="px-3 py-1.5 border rounded-md text-gray-600 disabled:opacity-40 hover:bg-gray-50"
           >
             Next
           </button>
         </div>
       </div>
 
-      {/* MODALS (unchanged) */}
+      {/* MODAL */}
       {showNew && (
         <NewSessionModal
           form={form}
@@ -266,6 +271,91 @@ export default function SessionsList({ navigate }) {
           onClose={() => setShowPicker(null)}
         />
       )}
+    </div>
+  );
+}
+
+/* -------------------------- NEW SESSION MODAL -------------------------- */
+
+function NewSessionModal({
+  form,
+  setForm,
+  onClose,
+  onCreate,
+  participants,
+  studies,
+  openPicker,
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="relative z-10 bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+        <h2 className="text-lg font-semibold text-gray-900">New Session</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          Create a session and assign a participant to a study.
+        </p>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs text-gray-600">Participant</label>
+            <button
+              onClick={() => openPicker("participant")}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm text-left hover:bg-gray-50"
+            >
+              {form.participantId
+                ? participants.find((p) => p._id === form.participantId)?.name
+                : "Select participant…"}
+            </button>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600">Study</label>
+            <button
+              onClick={() => openPicker("study")}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm text-left hover:bg-gray-50"
+            >
+              {form.studyId
+                ? studies.find((s) => s._id === form.studyId)?.title
+                : "Select study…"}
+            </button>
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600">Date & time</label>
+            <input
+              type="datetime-local"
+              value={form.startedAt}
+              onChange={(e) => setForm({ ...form, startedAt: e.target.value })}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-gray-600">Notes</label>
+            <textarea
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              rows={2}
+              className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded-md text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onCreate}
+              className="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+            >
+              Create session
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
