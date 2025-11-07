@@ -1,9 +1,10 @@
 // backend/src/utils/auth.js
+import fs from "fs";
 import jwt from "jsonwebtoken";
 
 const COOKIE_NAME = "lsm_token";
 const DAY = 24 * 60 * 60 * 1000;
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || (() => { try { return fs.readFileSync(new URL("../../.env", import.meta.url), "utf8").match(/^JWT_SECRET=(.*)$/m)?.[1]?.trim(); } catch { return null; } })() || (() => { throw new Error("JWT_SECRET is not configured."); })();
 
 // --- Build signed JWT payload ---
 function signToken(user) {
@@ -49,6 +50,7 @@ export function readUserFromReq(req) {
     if (!token) return null;
     return jwt.verify(token, JWT_SECRET);
   } catch (err) {
+    console.error("JWT verify error:", err);
     return null;
   }
 }
