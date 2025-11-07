@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { apiJson } from "../utils/api";
-import PickerModal from "./PickerModal"; // Used for selecting Participants / Studies
+import PickerModal from "./PickerModal";
 
 const FILTERS = ["New", "This Week", "All"];
 const PAGE_SIZE = 10;
@@ -9,11 +9,10 @@ export default function SessionsList({ navigate }) {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("All");
-  const [search, setSearch] = useState("");
 
   const [page, setPage] = useState(1);
   const [showNew, setShowNew] = useState(false);
-  const [showPicker, setShowPicker] = useState(null); // 'participant' | 'study'
+  const [showPicker, setShowPicker] = useState(null);
   const [participants, setParticipants] = useState([]);
   const [studies, setStudies] = useState([]);
 
@@ -59,36 +58,18 @@ export default function SessionsList({ navigate }) {
   const filtered = useMemo(() => {
     const now = new Date();
     return sessions.filter((s) => {
-      // Date filtering logic
       const created = new Date(s.createdAt);
-      if (filter === "New" && (now - created) / (1000 * 60 * 60 * 24) > 7) {
-        return false;
-      }
+      if (filter === "New") return (now - created) / (1000 * 60 * 60 * 24) <= 7;
       if (filter === "This Week") {
         const start = new Date(now);
         start.setDate(now.getDate() - now.getDay());
         const end = new Date(start);
         end.setDate(start.getDate() + 6);
-        if (!(created >= start && created <= end)) {
-          return false;
-        }
+        return created >= start && created <= end;
       }
-
-      // 🔍 Search filtering logic
-      if (search.trim()) {
-        const q = search.toLowerCase();
-        return (
-          s.participantName?.toLowerCase().includes(q) ||
-          s.studyName?.toLowerCase().includes(q) ||
-          s.notes?.toLowerCase().includes(q) ||
-          (s.status || "").toLowerCase().includes(q) ||
-          (`S-${s.sid}` || "").toLowerCase().includes(q)
-        );
-      }
-
       return true;
     });
-  }, [sessions, filter, search]);
+  }, [sessions, filter]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const currentPageData = filtered.slice(
@@ -124,7 +105,7 @@ export default function SessionsList({ navigate }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6">  {/* ✅ centered container */}
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-8">
         <div>
@@ -135,17 +116,6 @@ export default function SessionsList({ navigate }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Search…"
-            className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
-          />
-
           {FILTERS.map((f) => (
             <button
               key={f}
@@ -162,7 +132,6 @@ export default function SessionsList({ navigate }) {
               {f}
             </button>
           ))}
-
           <button
             onClick={() => setShowNew(true)}
             className="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow hover:bg-indigo-700"
@@ -196,14 +165,11 @@ export default function SessionsList({ navigate }) {
                     minute: "2-digit",
                   })
                 : "N/A";
-              const sid =
-                s.sid || (s._id ? s._id.slice(-4).toUpperCase() : "—");
+              const sid = s.sid || (s._id ? s._id.slice(-4).toUpperCase() : "—");
 
               return (
                 <tr key={s._id} className="hover:bg-gray-50 transition">
-                  <td className="px-4 py-3 font-medium text-gray-900">
-                    S-{sid}
-                  </td>
+                  <td className="px-4 py-3 font-medium text-gray-900">S-{sid}</td>
                   <td className="px-4 py-3 text-gray-700">{dateStr}</td>
                   <td className="px-4 py-3 text-gray-700">{timeStr}</td>
                   <td className="px-4 py-3 text-gray-700">
@@ -273,7 +239,7 @@ export default function SessionsList({ navigate }) {
         </div>
       </div>
 
-      {/* NEW SESSION MODAL */}
+      {/* MODALS (unchanged) */}
       {showNew && (
         <NewSessionModal
           form={form}
@@ -286,7 +252,6 @@ export default function SessionsList({ navigate }) {
         />
       )}
 
-      {/* PICKER */}
       {showPicker && (
         <PickerModal
           type={showPicker}
@@ -301,94 +266,6 @@ export default function SessionsList({ navigate }) {
           onClose={() => setShowPicker(null)}
         />
       )}
-    </div>
-  );
-}
-
-/* -------------------------- NEW SESSION MODAL -------------------------- */
-function NewSessionModal({
-  form,
-  setForm,
-  onClose,
-  onCreate,
-  participants,
-  studies,
-  openPicker,
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className="relative z-10 bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-        <h2 className="text-lg font-semibold text-gray-900">New Session</h2>
-        <p className="text-sm text-gray-500 mb-4">
-          Create a session and assign a participant to a study.
-        </p>
-
-        <div className="space-y-4">
-          {/* Participant */}
-          <div>
-            <label className="block text-xs text-gray-600">Participant</label>
-            <button
-              onClick={() => openPicker("participant")}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm text-left hover:bg-gray-50"
-            >
-              {form.participantId
-                ? participants.find((p) => p._id === form.participantId)?.name
-                : "Select participant…"}
-            </button>
-          </div>
-
-          {/* Study */}
-          <div>
-            <label className="block text-xs text-gray-600">Study</label>
-            <button
-              onClick={() => openPicker("study")}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm text-left hover:bg-gray-50"
-            >
-              {form.studyId
-                ? studies.find((s) => s._id === form.studyId)?.title
-                : "Select study…"}
-            </button>
-          </div>
-
-          {/* Date */}
-          <div>
-            <label className="block text-xs text-gray-600">Date & time</label>
-            <input
-              type="datetime-local"
-              value={form.startedAt}
-              onChange={(e) => setForm({ ...form, startedAt: e.target.value })}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm"
-            />
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label className="block text-xs text-gray-600">Notes</label>
-            <textarea
-              value={form.notes}
-              onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              rows={2}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 text-sm"
-            />
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={onCreate}
-              className="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-            >
-              Create session
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
