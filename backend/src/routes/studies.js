@@ -66,4 +66,44 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  const { title, tags, description } = req.body || {};
+  const now = new Date();
+
+  let objectId;
+  try {
+    objectId = new ObjectId(req.params.id);
+  } catch {
+    return res.status(400).json({ error: "Invalid ID format" });
+  }
+
+  try {
+    const updateResult = await col().updateOne(
+      { _id: objectId },
+      {
+        $set: {
+          title: title?.trim() || "",
+          tags: Array.isArray(tags)
+            ? tags.map((t) => t.trim()).filter(Boolean)
+            : [],
+          description: description?.trim() || "",
+          updatedAt: now,
+        },
+      }
+    );
+
+    if (updateResult.matchedCount === 0) {
+      return res.status(404).json({ error: "Study not found" });
+    }
+
+    // Fetch updated document manually to return
+    const updatedDoc = await col().findOne({ _id: objectId });
+    res.json(updatedDoc);
+  } catch (err) {
+    console.error("Update failed:", err);
+    res.status(500).json({ error: "Failed to update study" });
+  }
+});
+
+
 export default router;

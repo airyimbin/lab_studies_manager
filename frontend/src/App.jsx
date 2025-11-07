@@ -1,107 +1,90 @@
-import React, { useCallback, useEffect, useState } from "react";
-import NavBar from "./components/NavBar.jsx";
-import Dashboard from "./components/Dashboard.jsx";
-import ParticipantsList from "./components/ParticipantsList.jsx";
-import ParticipantDetail from "./components/ParticipantDetail.jsx";
-import StudiesList from "./components/StudiesList.jsx";
-import StudiesDetail from "./components/StudiesDetail.jsx";
-import SessionsList from "./components/SessionsList.jsx";
-import SessionsDetail from "./components/SessionsDetail.jsx";
-import Login from "./components/Login.jsx";
+import React, { useState, useEffect } from "react";
+import NavBar from "./components/NavBar";
 
-const routes = [
-  { path: "/", Component: Dashboard },
-  { path: "/participants", Component: ParticipantsList },
-  { path: "/participants/:id", Component: ParticipantDetail },
-  { path: "/studies", Component: StudiesList },
-  { path: "/studies/:id", Component: StudiesDetail },
-  { path: "/sessions", Component: SessionsList },
-  { path: "/sessions/:id", Component: SessionsDetail },
-  { path: "/login", Component: Login },
-];
+// Pages
+import Dashboard from "./components/Dashboard";
+import ParticipantsList from "./components/ParticipantsList";
+import StudiesList from "./components/StudiesList";
+import SessionsList from "./components/SessionsList";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
 
-const defaultPath = "/";
+// Detail Pages
+import ParticipantDetail from './components/ParticipantDetail'
+import StudyDetail from './components/StudiesDetail'
+import SessionsDetail from "./components/SessionsDetail";
 
-function escapeRegex(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-const COMPILED_ROUTES = routes.map((route) => {
-  const keys = [];
-  const pattern = route.path
-    .split("/")
-    .map((segment) => {
-      if (segment.startsWith(":")) {
-        keys.push(segment.slice(1));
-        return "([^/]+)";
-      }
-      return escapeRegex(segment);
-    })
-    .join("/");
-  const regex = new RegExp(`^${pattern}$`);
-  return { ...route, regex, keys };
-});
-
-function normalizePath(path) {
-  if (!path) return defaultPath;
-  return path.startsWith("/") ? path : `/${path}`;
-}
-
-function matchRoute(path) {
-  const normalized = normalizePath(path);
-  for (const route of COMPILED_ROUTES) {
-    const match = normalized.match(route.regex);
-    if (match) {
-      const params = {};
-      route.keys.forEach((key, index) => {
-        params[key] = match[index + 1];
-      });
-      return { path: normalized, route, params };
-    }
-  }
-  const fallback = COMPILED_ROUTES[0];
-  return { path: fallback.path, route: fallback, params: {} };
-}
-
-function readHash() {
-  if (typeof window === "undefined") {
-    return matchRoute(defaultPath);
-  }
-  const raw = window.location.hash.replace(/^#/, "");
-  return matchRoute(raw || defaultPath);
-}
+import { AuthProvider, useAuth } from "./authContext";
 
 export default function App() {
-  const [routeState, setRouteState] = useState(() => readHash());
-  const { path: currentPath, route, params } = routeState;
+  const [path, setPath] = useState(window.location.hash.slice(1) || "/");
 
   useEffect(() => {
-    const handleHashChange = () => {
-      setRouteState(readHash());
-    };
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
+    const update = () => setPath(window.location.hash.slice(1) || "/");
+    window.addEventListener("hashchange", update);
+    return () => window.removeEventListener("hashchange", update);
   }, []);
 
-  const navigate = useCallback(
-    (path) => {
-      const next = matchRoute(path);
-      if (next.path === currentPath) return;
-      window.location.hash = next.path;
-      setRouteState(next);
-    },
-    [currentPath]
-  );
-
-  const ActiveComponent = route.Component;
-  const componentProps = { ...params, navigate };
+  const navigate = (to) => {
+    window.location.hash = to;
+  };
 
   return (
+    <AuthProvider>
+      <AppRoutes path={path} navigate={navigate} />
+    </AuthProvider>
+  );
+}
+
+function AppRoutes({ path, navigate }) {
+  const { user, loading } = useAuth();
+
+  // Wait until /auth/me check completes
+  if (loading) return <div className="p-6 text-gray-600">Loading...</div>;
+
+  // Redirect logged-in users away from login/signup
+  if (user && (path === "/login" || path === "/signup")) {
+    navigate("/");
+    return null;
+  }
+
+  // Public routes
+  if (path === "/login") return <Login navigate={navigate} />;
+  if (path === "/signup") return <Signup navigate={navigate} />;
+
+  // If NOT logged in, redirect to login
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
+
+  // ✅ Detail Pages (match `/route/:id`)
+  if (path.startsWith("/participants/")) {
+    const id = path.split("/")[2];
+    return <ParticipantDetail id={id} navigate={navigate} />;
+  }
+
+  if (path.startsWith("/studies/")) {
+    const id = path.split("/")[2];
+    return <StudyDetail id={id} navigate={navigate} />;
+  }
+
+  if (path.startsWith("/sessions/")) {
+    const id = path.split("/")[2];
+    return <SessionsDetail id={id} navigate={navigate} />;
+  }
+
+  // ✅ Main protected pages (lists / dashboard)
+  return (
     <>
-      <NavBar currentPath={currentPath} onNavigate={navigate} />
-      <main className="">
-        <ActiveComponent {...componentProps} />
-      </main>
+      <NavBar currentPath={path} onNavigate={navigate} />
+      {path === "/" && <Dashboard navigate={navigate} />}
+      {path === "/participants" && <ParticipantsList navigate={navigate} />}
+      {path === "/studies" && <StudiesList navigate={navigate} />}
+      {path === "/sessions" && <SessionsList navigate={navigate} />}
+      {/* Fallback: redirect unknown routes */}
+      {!["/", "/participants", "/studies", "/sessions"].includes(path) &&
+        navigate("/")}
     </>
   );
 }

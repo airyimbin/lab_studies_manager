@@ -1,12 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { useAuth } from "../authContext.jsx";
+import { apiJson } from "../utils/api.js";
 
 const LINKS = [
   { path: "/", label: "Dashboard" },
   { path: "/participants", label: "Participants" },
   { path: "/studies", label: "Studies" },
   { path: "/sessions", label: "Sessions" },
-  { path: "/login", label: "Login" },
 ];
 
 const baseLinkClasses =
@@ -19,22 +20,37 @@ const inactiveLinkClasses =
   "bg-white/5 text-slate-200 hover:bg-white/10 hover:text-white hover:-translate-y-0.5";
 
 export default function NavBar({ currentPath = "/", onNavigate = () => {} }) {
+  const { user, refreshUser } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await apiJson("/auth/logout", "POST");
+      await refreshUser();
+      window.location.hash = "/login";
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
   return (
     <header className="navbar relative sticky top-0 z-50 flex flex-col gap-4 overflow-hidden border-b border-white/10 bg-slate-950/70 px-6 py-4 text-slate-100 shadow-[0_35px_60px_-35px_rgba(15,23,42,0.9)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-8">
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-transparent to-fuchsia-500/20" aria-hidden />
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-transparent to-fuchsia-500/20"
+        aria-hidden
+      />
 
+      {/* Brand */}
       <div className="navbar__brand relative z-10 flex items-center gap-3 text-lg font-semibold tracking-tight text-white">
         <span>Lab Studies Manager</span>
-        <span
-          className="inline-flex h-2.5 w-2.5 rounded-full bg-gradient-to-br from-indigo-400 via-sky-400 to-fuchsia-400 shadow-[0_0_14px_rgba(129,140,248,0.8)]"
-          aria-hidden
-        />
+        <span className="inline-flex h-2.5 w-2.5 rounded-full bg-gradient-to-br from-indigo-400 via-sky-400 to-fuchsia-400 shadow-[0_0_14px_rgba(129,140,248,0.8)]" />
       </div>
 
+      {/* Links */}
       <nav className="navbar__links no-scrollbar relative z-10 flex items-center gap-2 overflow-x-auto pb-1 text-sm text-slate-200 sm:gap-3">
         {LINKS.map(({ path, label }) => {
           const isActive =
-            currentPath === path || (path !== "/" && currentPath.startsWith(`${path}/`));
+            currentPath === path ||
+            (path !== "/" && currentPath.startsWith(`${path}/`));
           return (
             <a
               key={path}
@@ -45,21 +61,35 @@ export default function NavBar({ currentPath = "/", onNavigate = () => {} }) {
               onClick={(event) => {
                 event.preventDefault();
                 onNavigate(path);
-                if (typeof window !== "undefined") {
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }
+                window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               aria-current={isActive ? "page" : undefined}
             >
-              <span
-                className="absolute inset-0 bg-white/20 opacity-0 transition duration-200 group-hover:opacity-40"
-                aria-hidden
-              />
+              <span className="absolute inset-0 bg-white/20 opacity-0 transition duration-200 group-hover:opacity-40" />
               <span className="relative z-10">{label}</span>
             </a>
           );
         })}
       </nav>
+
+      {/* Auth Buttons */}
+      <div className="relative z-10">
+        {user ? (
+          <button
+            onClick={handleLogout}
+            className="px-3 py-1 rounded-md border border-gray-300 text-sm hover:bg-white/10"
+          >
+            {user.name} • Logout
+          </button>
+        ) : (
+          <a
+            href="#/login"
+            className="px-3 py-1 rounded-md border border-gray-300 text-sm hover:bg-white/10"
+          >
+            Login
+          </a>
+        )}
+      </div>
     </header>
   );
 }
