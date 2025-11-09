@@ -102,4 +102,24 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  let objectId;
+  try {
+    objectId = new ObjectId(req.params.id);
+  } catch {
+    return res.status(400).json({ error: "Invalid ID" });
+  }
+
+  try {
+    const result = await col().deleteOne({ _id: objectId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Not found" });
+    }
+    res.status(204).end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not delete participant" });
+  }
+});
+
 export default router;

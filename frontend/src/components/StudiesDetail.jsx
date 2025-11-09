@@ -94,12 +94,32 @@ export default function StudiesDetail({ id, navigate }) {
             Slug: <span className="font-mono">{study.slug || "—"}</span>
           </p>
         </div>
-        <button
-          onClick={() => setShowEditModal(true)}
-          className="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
-        >
-          Edit Study
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowEditModal(true)}
+            className="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+          >
+            Edit Study
+          </button>
+          <button
+            onClick={async () => {
+              if (!confirm("Delete this study? This cannot be undone.")) return;
+              try {
+                await apiJson(`/studies/${id}`, "DELETE");
+                if (typeof navigate === "function") {
+                  navigate("/studies");
+                } else if (typeof window !== "undefined") {
+                  window.location.hash = "/studies";
+                }
+              } catch (err) {
+                alert(err.message || "Failed to delete study");
+              }
+            }}
+            className="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-medium hover:bg-red-700"
+          >
+            Delete
+          </button>
+        </div>
       </div>
 
       {/* Overview card */}

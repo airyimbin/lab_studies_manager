@@ -110,5 +110,25 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  let objectId;
+  try {
+    objectId = new ObjectId(req.params.id);
+  } catch {
+    return res.status(400).json({ error: "Invalid ID format" });
+  }
+
+  try {
+    const result = await col().deleteOne({ _id: objectId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Study not found" });
+    }
+    res.status(204).end();
+  } catch (err) {
+    console.error("Delete failed:", err);
+    res.status(500).json({ error: "Failed to delete study" });
+  }
+});
+
 
 export default router;

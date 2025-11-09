@@ -131,12 +131,32 @@ export default function ParticipantDetail({ id, navigate }) {
                 </h1>
                 <p className="text-sm text-gray-500 mt-2">External ID: {participant.externalId || "—"}</p>
               </div>
-              <button
-                onClick={() => setShowEdit(true)}
-                className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700"
-              >
-                Update info
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowEdit(true)}
+                  className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700"
+                >
+                  Update info
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!confirm("Delete this participant? This action cannot be undone.")) return;
+                    try {
+                      await apiJson(`/participants/${id}`, "DELETE");
+                      if (typeof navigate === "function") {
+                        navigate("/participants");
+                      } else if (typeof window !== "undefined") {
+                        window.location.hash = "/participants";
+                      }
+                    } catch (err) {
+                      alert(err.message || "Failed to delete participant");
+                    }
+                  }}
+                  className="inline-flex items-center justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
 
             <dl className="mt-6 grid gap-4 sm:grid-cols-3">
