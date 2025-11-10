@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 
 export default function PickerModal({ type, data, onSelect, onClose }) {
   const [query, setQuery] = useState("");
@@ -64,10 +63,3 @@ export default function PickerModal({ type, data, onSelect, onClose }) {
     </div>
   );
 }
-
-PickerModal.propTypes = {
-  type: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired,
-  onSelect: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-};

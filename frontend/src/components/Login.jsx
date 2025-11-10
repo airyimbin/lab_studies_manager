@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { apiJson } from "../utils/api";
 import { useAuth } from "../authContext";
-import PropTypes from "prop-types";
 
 export default function Login({ navigate }) {
   const { refreshUser } = useAuth();
@@ -86,7 +85,3 @@ export default function Login({ navigate }) {
     </div>
   );
 }
-
-Login.propTypes = {
-  navigate: PropTypes.func.isRequired,
-};

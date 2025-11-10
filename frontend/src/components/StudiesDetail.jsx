@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { apiJson } from "../utils/api";
-import PropTypes from "prop-types";
 
 export default function StudiesDetail({ id, navigate }) {
   const [study, setStudy] = useState(null);
@@ -241,8 +240,3 @@ export default function StudiesDetail({ id, navigate }) {
     </div>
   );
 }
-
-StudiesDetail.propTypes = {
-  id: PropTypes.string.isRequired,
-  navigate: PropTypes.func.isRequired,
-};

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
 import NavBar from "./components/NavBar";
 import Dashboard from "./components/Dashboard";
 import ParticipantsList from "./components/ParticipantsList";
@@ -39,17 +38,17 @@ function AppRoutes({ path, navigate }) {
   // Wait for auth state
   if (loading) return <div className="p-6 text-gray-600">Loading...</div>;
 
-  // Redirect logged-in users away from login or signup
+  // ✅ Redirect logged-in users away from login or signup
   if (user && (path === "/login" || path === "/signup")) {
     navigate("/");
     return null;
   }
 
-  // Public routes
+  // ✅ PUBLIC ROUTES
   if (path === "/login") return <Login navigate={navigate} />;
   if (path === "/signup") return <Signup navigate={navigate} />;
 
-  // Protected routes
+  // ✅ PROTECTED ROUTES — only after login
   if (!user) {
     navigate("/login");
     return null;
@@ -59,8 +58,10 @@ function AppRoutes({ path, navigate }) {
 
   return (
     <>
+      {/* ✅ NavBar visible only after login */}
       <NavBar currentPath={path} onNavigate={navigate} />
 
+      {/* ROUTES */}
       {path === "/" && <Dashboard navigate={navigate} />}
 
       {/* Participants */}
@@ -89,9 +90,3 @@ function AppRoutes({ path, navigate }) {
     </> 
   );
 }
-
-/* ✅ FIX: define PropTypes for the right component */
-AppRoutes.propTypes = {
-  path: PropTypes.string.isRequired,
-  navigate: PropTypes.func.isRequired,
-};

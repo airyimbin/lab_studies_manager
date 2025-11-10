@@ -1,17 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { apiJson } from "../utils/api";
-import PropTypes from "prop-types";
 
 /** Simple centered modal shell */
 function Shell({ title, subtitle, onClose, children, wide = false }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div
-        className={`relative z-10 bg-white rounded-2xl shadow-xl w-full ${
-          wide ? "max-w-3xl" : "max-w-lg"
-        } mx-4 p-6`}
-      >
+      <div className={`relative z-10 bg-white rounded-2xl shadow-xl w-full ${wide ? "max-w-3xl" : "max-w-lg"} mx-4 p-6`}>
         <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
         {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
         <div className="mt-4">{children}</div>
@@ -19,14 +14,6 @@ function Shell({ title, subtitle, onClose, children, wide = false }) {
     </div>
   );
 }
-
-Shell.propTypes = {
-  title: PropTypes.string.isRequired,
-  subtitle: PropTypes.string,
-  onClose: PropTypes.func.isRequired,
-  children: PropTypes.node,
-  wide: PropTypes.bool,
-};
 
 /** Reusable in-memory filtered picker modal (table list) */
 function PickerModal({ title, rows, loading, columns, getKey, onClose, onSelect }) {
@@ -57,26 +44,16 @@ function PickerModal({ title, rows, loading, columns, getKey, onClose, onSelect 
           <thead className="bg-gray-50 text-gray-700 uppercase text-xs font-semibold">
             <tr>
               {columns.map((c) => (
-                <th key={c.key} className="px-4 py-3">
-                  {c.label}
-                </th>
+                <th key={c.key} className="px-4 py-3">{c.label}</th>
               ))}
               <th className="px-4 py-3 text-right">Select</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
-              <tr>
-                <td className="px-4 py-4 text-gray-500" colSpan={columns.length + 1}>
-                  Loading…
-                </td>
-              </tr>
+              <tr><td className="px-4 py-4 text-gray-500" colSpan={columns.length + 1}>Loading…</td></tr>
             ) : filtered.length === 0 ? (
-              <tr>
-                <td className="px-4 py-4 text-gray-500" colSpan={columns.length + 1}>
-                  No results
-                </td>
-              </tr>
+              <tr><td className="px-4 py-4 text-gray-500" colSpan={columns.length + 1}>No results</td></tr>
             ) : (
               filtered.map((row) => (
                 <tr key={getKey(row)} className="hover:bg-gray-50">
@@ -103,26 +80,13 @@ function PickerModal({ title, rows, loading, columns, getKey, onClose, onSelect 
       </div>
 
       <div className="mt-4 flex justify-end">
-        <button
-          onClick={onClose}
-          className="px-4 py-2 rounded-md border border-gray-300 text-sm"
-        >
+        <button onClick={onClose} className="px-4 py-2 rounded-md border border-gray-300 text-sm">
           Close
         </button>
       </div>
     </Shell>
   );
 }
-
-PickerModal.propTypes = {
-  title: PropTypes.string.isRequired,
-  rows: PropTypes.array.isRequired,
-  loading: PropTypes.bool,
-  columns: PropTypes.array.isRequired,
-  getKey: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onSelect: PropTypes.func.isRequired,
-};
 
 /** New Session Modal (fetch-all + client filtering pickers) */
 export default function NewSessionModal({ open, onClose, onCreated }) {
@@ -300,10 +264,3 @@ export default function NewSessionModal({ open, onClose, onCreated }) {
     </Shell>
   );
 }
-
-NewSessionModal.propTypes = {
-  open: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onCreated: PropTypes.func,
-};
-
