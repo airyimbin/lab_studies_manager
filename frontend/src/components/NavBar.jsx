@@ -6,9 +6,9 @@ import { apiJson } from "../utils/api.js";
 const LINKS = [
   { path: "/", label: "Dashboard" },
   { path: "/participants", label: "Participants" },
-  { path: "/instructions", label: "Instructions" },
   { path: "/studies", label: "Studies" },
   { path: "/sessions", label: "Sessions" },
+  { path: "/instructions", label: "Instructions" },
 ];
 
 const baseLinkClasses =
