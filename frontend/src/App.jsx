@@ -10,6 +10,7 @@ import SessionsDetail from "./components/SessionsDetail";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import { AuthProvider, useAuth } from "./authContext";
+import Instructions from "./components/Instructions";
 
 export default function App() {
   const [path, setPath] = useState(window.location.hash.slice(1) || "/");
@@ -80,6 +81,12 @@ function AppRoutes({ path, navigate }) {
       {isDetailRoute("/sessions") && (
         <SessionsDetail id={path.split("/")[2]} navigate={navigate} />
       )}
-    </>
+
+      {/* Instructions */}
+      {path === "/instructions" && <Instructions navigate={navigate} />}
+      {isDetailRoute("/instructions") && (
+        <SessionsDetail id={path.split("/")[2]} navigate={navigate} />
+      )}
+    </> 
   );
 }
