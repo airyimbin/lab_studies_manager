@@ -30,26 +30,35 @@ router.get("/", async (req, res) => {
       sessions.map(async (session) => {
         const [study, participant] = await Promise.all([
           session.studyId
-            ? db.collection("studies").findOne(
-                { _id: new ObjectId(session.studyId) },
-                { projection: { title: 1 } }
-              )
+            ? db
+                .collection("studies")
+                .findOne(
+                  { _id: new ObjectId(session.studyId) },
+                  { projection: { title: 1 } }
+                )
             : null,
           session.participantId
-            ? db.collection("participants").findOne(
-                { _id: new ObjectId(session.participantId) },
-                { projection: { name: 1 } }
-              )
+            ? db
+                .collection("participants")
+                .findOne(
+                  { _id: new ObjectId(session.participantId) },
+                  { projection: { name: 1 } }
+                )
             : null,
         ]);
 
         return {
           ...session,
           study:
-            study || (session.studyId ? { _id: session.studyId, title: "(deleted)" } : null),
+            study ||
+            (session.studyId
+              ? { _id: session.studyId, title: "(deleted)" }
+              : null),
           participant:
             participant ||
-            (session.participantId ? { _id: session.participantId, name: "(deleted)" } : null),
+            (session.participantId
+              ? { _id: session.participantId, name: "(deleted)" }
+              : null),
         };
       })
     );
@@ -71,24 +80,31 @@ router.get("/:id", async (req, res) => {
 
     const [study, participant] = await Promise.all([
       session.studyId
-        ? db.collection("studies").findOne(
-            { _id: new ObjectId(session.studyId) },
-            { projection: { title: 1 } }
-          )
+        ? db
+            .collection("studies")
+            .findOne(
+              { _id: new ObjectId(session.studyId) },
+              { projection: { title: 1 } }
+            )
         : null,
       session.participantId
-        ? db.collection("participants").findOne(
-            { _id: new ObjectId(session.participantId) },
-            { projection: { name: 1 } }
-          )
+        ? db
+            .collection("participants")
+            .findOne(
+              { _id: new ObjectId(session.participantId) },
+              { projection: { name: 1 } }
+            )
         : null,
     ]);
 
     session.study =
-      study || (session.studyId ? { _id: session.studyId, title: "(deleted)" } : null);
+      study ||
+      (session.studyId ? { _id: session.studyId, title: "(deleted)" } : null);
     session.participant =
       participant ||
-      (session.participantId ? { _id: session.participantId, name: "(deleted)" } : null);
+      (session.participantId
+        ? { _id: session.participantId, name: "(deleted)" }
+        : null);
 
     res.json(session);
   } catch (err) {
@@ -185,11 +201,13 @@ router.post("/", async (req, res) => {
   try {
     const db = getDB();
     const col = db.collection("sessions");
-    const actor = (req.headers["x-actor"] || "System");
+    const actor = req.headers["x-actor"] || "System";
 
     const doc = {
       studyId: req.body.studyId ? new ObjectId(req.body.studyId) : null,
-      participantId: req.body.participantId ? new ObjectId(req.body.participantId) : null,
+      participantId: req.body.participantId
+        ? new ObjectId(req.body.participantId)
+        : null,
       startedAt: req.body.startedAt ? new Date(req.body.startedAt) : new Date(),
       endedAt: null,
       notes: req.body.notes || null,
@@ -198,7 +216,9 @@ router.post("/", async (req, res) => {
       createdAt: new Date(),
       updatedAt: new Date(),
       createdBy: actor,
-      history: [{ at: new Date(), event: `Session created by ${actor}`, actor }],
+      history: [
+        { at: new Date(), event: `Session created by ${actor}`, actor },
+      ],
     };
 
     const result = await col.insertOne(doc);
@@ -211,6 +231,25 @@ router.post("/", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Could not create session" });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const _id = new ObjectId(req.params.id);
+    const db = getDB();
+    const sessions = db.collection("sessions");
+
+    const result = await sessions.deleteOne({ _id });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    res.json({ message: "Session deleted successfully", id: req.params.id });
+  } catch (err) {
+    console.error("Failed to delete session:", err);
+    res.status(400).json({ error: "Invalid ID format or deletion error" });
   }
 });
 

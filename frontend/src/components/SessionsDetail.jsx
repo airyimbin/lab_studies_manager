@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { apiJson } from "../utils/api";
+import PropTypes from "prop-types";
 
 // Colored-dot status badge
 function StatusBadge({ status }) {
@@ -18,6 +19,10 @@ function StatusBadge({ status }) {
     </span>
   );
 }
+
+StatusBadge.propTypes = {
+  status: PropTypes.string.isRequired,
+};
 
 export default function SessionsDetail({ id, navigate }) {
   const [session, setSession] = useState(null);
@@ -60,10 +65,25 @@ export default function SessionsDetail({ id, navigate }) {
     await load();
   };
 
-  // Cancel
+  // Cancel session
   const cancelSession = async () => {
     await apiJson(`/sessions/${id}`, "PUT", { status: "Cancelled" });
     await load();
+  };
+
+  // ✅ Delete session
+  const deleteSession = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this session?"
+    );
+    if (!confirmed) return;
+    try {
+      await apiJson(`/sessions/${id}`, "DELETE");
+      navigate("/sessions");
+    } catch (err) {
+      console.error("Failed to delete session:", err);
+      alert("Failed to delete session.");
+    }
   };
 
   if (loading) return <div className="p-6">Loading session…</div>;
@@ -76,12 +96,14 @@ export default function SessionsDetail({ id, navigate }) {
     ? new Date(session.updatedAt).toLocaleString()
     : "—";
 
-  // ✅ FIX: use startedAt instead of old "date"
   const baseDate = session.startedAt ? new Date(session.startedAt) : null;
   const dateStr = baseDate ? baseDate.toLocaleDateString() : "—";
   const timeStr = baseDate
     ? baseDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     : "—";
+
+  // ✅ Generate history items (fallback if no data)
+  const history = session.history?.length ? session.history : [];
 
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
@@ -96,21 +118,49 @@ export default function SessionsDetail({ id, navigate }) {
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-black tracking-wider">SESSION</h1>
+            <h1 className="text-2xl font-bold text-black tracking-wider">
+              SESSION
+            </h1>
             <div className="mt-2 text-sm text-gray-500">
               Created: {createdAt} • Last updated: {updatedAt}
             </div>
+          </div>
+
+          {/* ✅ Action Buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={markCompleted}
+              className="px-4 py-2 rounded-md border border-indigo-600 text-indigo-600 text-sm font-medium hover:bg-indigo-50"
+            >
+              Mark completed
+            </button>
+            <button
+              onClick={cancelSession}
+              className="px-4 py-2 rounded-md bg-yellow-500 text-white text-sm font-medium hover:bg-yellow-600"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={deleteSession}
+              className="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-medium hover:bg-red-700"
+            >
+              Delete
+            </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
           <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
             <div className="text-xs text-gray-500 uppercase">Participant</div>
-            <div className="mt-1 text-gray-900">{session.participant?.name || "(deleted)"}</div>
+            <div className="mt-1 text-gray-900">
+              {session.participant?.name || "(deleted)"}
+            </div>
           </div>
           <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
             <div className="text-xs text-gray-500 uppercase">Study</div>
-            <div className="mt-1 text-gray-900">{session.study?.title || "(deleted)"}</div>
+            <div className="mt-1 text-gray-900">
+              {session.study?.title || "(deleted)"}
+            </div>
           </div>
           <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
             <div className="text-xs text-gray-500 uppercase">Status</div>
@@ -121,7 +171,7 @@ export default function SessionsDetail({ id, navigate }) {
         </div>
       </div>
 
-      {/* Details & Actions */}
+      {/* Details & Notes */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <h2 className="text-base font-semibold text-gray-900">Details</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
@@ -132,20 +182,6 @@ export default function SessionsDetail({ id, navigate }) {
           <div>
             <div className="text-xs text-gray-500 uppercase">Time</div>
             <div className="mt-1 text-gray-900">{timeStr}</div>
-          </div>
-          <div className="flex items-end gap-2">
-            <button
-              onClick={markCompleted}
-              className="px-4 py-2 rounded-md border border-indigo-600 text-indigo-600 text-sm font-medium hover:bg-indigo-50"
-            >
-              Mark completed
-            </button>
-            <button
-              onClick={cancelSession}
-              className="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-medium hover:bg-red-700"
-            >
-              Cancel
-            </button>
           </div>
         </div>
 
@@ -171,14 +207,25 @@ export default function SessionsDetail({ id, navigate }) {
         </div>
       </div>
 
-      {/* History (placeholder until backend logs implemented) */}
+      {/* ✅ Dynamic History */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <h2 className="text-base font-semibold text-gray-900">History</h2>
         <ul className="mt-4 space-y-2 text-sm text-gray-700">
-          <li>• Created</li>
-          <li>• Status changed</li>
+          {history.map((h, i) => (
+            <li key={i}>
+              • {h.event}{" "}
+              <span className="text-gray-500">
+                ({h.timestamp ? new Date(h.timestamp).toLocaleString() : "—"})
+              </span>
+            </li>
+          ))}
         </ul>
       </div>
     </div>
   );
 }
+
+SessionsDetail.propTypes = {
+  id: PropTypes.string.isRequired,
+  navigate: PropTypes.func.isRequired,
+};

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { apiJson } from "../utils/api";
+import PropTypes from "prop-types";
 
 export default function Signup({ navigate }) {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -90,3 +91,8 @@ export default function Signup({ navigate }) {
     </div>
   );
 }
+
+
+Signup.propTypes = {
+  navigate: PropTypes.func.isRequired,
+};
