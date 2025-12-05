@@ -91,11 +91,12 @@ router.put("/:id", async (req, res) => {
       { returnDocument: "after" }
     );
 
-    if (!result || !result.value) {
+    const updatedDoc = result && typeof result === "object" && "value" in result ? result.value : result;
+    if (!updatedDoc) {
       return res.status(404).json({ error: "Not found" });
     }
 
-    res.json(result.value);
+    res.json(updatedDoc);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Could not update participant" });
