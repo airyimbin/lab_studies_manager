@@ -7,7 +7,7 @@ function StatusBadge({ status }) {
   const map = {
     Sch: { text: "Scheduled", dot: "bg-blue-500" },
     Scheduled: { text: "Scheduled", dot: "bg-blue-500" },
-    Completed: { text: "Completed", dot: "bg-emerald-600" },
+    Completed: { text: "Completed", dot: "bg-emerald-700" },
     Cancelled: { text: "Cancelled", dot: "bg-red-600" },
     Canceled: { text: "Cancelled", dot: "bg-red-600" },
   };
@@ -115,7 +115,7 @@ export default function SessionsDetail({ id, navigate }) {
           <div className="flex gap-2">
             <button
               onClick={markCompleted}
-              className="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium shadow hover:bg-emerald-700"
+              className="px-4 py-2 rounded-md bg-emerald-700 text-white text-sm font-semibold shadow hover:bg-emerald-950"
             >
               Mark completed
             </button>

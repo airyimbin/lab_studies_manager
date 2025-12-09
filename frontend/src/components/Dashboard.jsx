@@ -365,7 +365,7 @@ export default function Dashboard({ navigate }) {
                                       onClick={() => {
                                         if (!session.endedAt) handleMarkDone(session._id);
                                       }}
-                                      className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
+                                      className="rounded-lg bg-emerald-700 px-3 py-1 text-xs font-semibold text-white transition hover:bg-emerald-950 disabled:opacity-60"
                                       disabled={Boolean(session.endedAt) || Boolean(savingSessions[session._id])}
                                     >
                                       {session.endedAt
@@ -445,7 +445,7 @@ export default function Dashboard({ navigate }) {
                                 onClick={() => {
                                   if (!session.endedAt) handleMarkDone(session._id);
                                 }}
-                                className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
+                                className="rounded-lg bg-emerald-700 px-3 py-1 text-xs font-semibold text-white transition hover:bg-emerald-950 disabled:opacity-60"
                                 disabled={Boolean(session.endedAt) || Boolean(savingSessions[session._id])}
                               >
                                 {session.endedAt

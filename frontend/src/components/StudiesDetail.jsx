@@ -112,9 +112,10 @@ export default function StudiesDetail({ id, navigate }) {
         <div className="flex gap-2">
           <button
             onClick={() => setShowEditModal(true)}
-            className="px-4 py-2 rounded-md bg-cyan-600 text-white text-sm font-medium shadow hover:bg-cyan-700"
+            className="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
           >
-            Edit Study
+            <span aria-hidden="true" className="text-base leading-none">{"\u270F"}</span>
+            <span>Edit study</span>
           </button>
           <button
             onClick={async () => {

@@ -4,13 +4,16 @@
   <meta charset="UTF-8" />
   <title>Lab Studies Manager</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
     theme: {
       extend: {
         fontFamily: {
-          sans: ['Inter', 'system-ui', 'sans-serif'],
+          sans: ['Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
         },
         boxShadow: {
           soft: '0 10px 25px -10px rgba(0,0,0,0.2)',
@@ -20,11 +23,16 @@
   }
 </script>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-white text-gray-900">
   <div id="root"></div>
   <script type="module" src="/src/index.jsx"></script>
   <style>
   html, body, #root { height: 100%; }
+  body {
+    font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    letter-spacing: 0.01em;
+    background-color: #fff;
+  }
   </style>
 </body>
 </html>

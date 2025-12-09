@@ -219,7 +219,7 @@ export default function SessionsList({ navigate }) {
                       </button>
                       <button
                         onClick={() => markStatus(s._id, "Completed")}
-                        className="px-3 py-1 rounded-md bg-emerald-600 text-white text-xs font-medium shadow hover:bg-emerald-700"
+                        className="px-3 py-1 rounded-md bg-emerald-700 text-white text-xs font-semibold shadow hover:bg-emerald-950"
                       >
                         Complete
                       </button>
