@@ -62,7 +62,7 @@ Then open http://localhost:5173
 
 ## Design Document
 [https://docs.google.com/document/d/1pCptA_EPWxMDa9iuu6bS9IwonjTFoxaoXTq72j-NQHo/edit?usp=sharing](https://docs.google.com/document/d/1pCptA_EPWxMDa9iuu6bS9IwonjTFoxaoXTq72j-NQHo/edit?usp=sharing)
-## Video Introduction
+## Video Demo
 [YouTube](https://youtu.be/t_IGL6UMyKw)
 ## Slides
 [Slides](https://docs.google.com/presentation/d/19lVoQOSdasM9bj8T88smcag_QwTFViYr/edit?usp=sharing&ouid=104535944839121315355&rtpof=true&sd=true)
@@ -71,6 +71,7 @@ Then open http://localhost:5173
 <img width="2553" height="1295" alt="Screenshot 2025-12-09 101204" src="https://github.com/user-attachments/assets/b2298ff1-fbb9-4e42-bcf4-9c8c9b16c584" />
 <img width="2558" height="1303" alt="Screenshot 2025-12-09 101149" src="https://github.com/user-attachments/assets/398c9a2c-01d6-4c56-a81c-fdd047c43dc9" />
 <img width="2558" height="1301" alt="Screenshot 2025-12-09 101134" src="https://github.com/user-attachments/assets/7adaa117-1b56-4f4d-9954-62e40324925b" />
+
 
 
 
