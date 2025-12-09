@@ -178,7 +178,6 @@ export default function StudiesDetail({ id, navigate }) {
                 <div>
                   <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
                     Title
-                  </label>
                   <input
                     className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
                     value={editForm.title}
@@ -187,6 +186,7 @@ export default function StudiesDetail({ id, navigate }) {
                     }
                     required
                   />
+                  </label>
                 </div>
 
                 <div>
@@ -206,7 +206,6 @@ export default function StudiesDetail({ id, navigate }) {
                 <div>
                   <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
                     Status
-                  </label>
                   <select
                     className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
                     value={editForm.status}
@@ -218,6 +217,7 @@ export default function StudiesDetail({ id, navigate }) {
                     <option value="draft">Draft</option>
                     <option value="archived">Archived</option>
                   </select>
+                  </label>
                 </div>
 
                 <div>
@@ -246,7 +246,7 @@ export default function StudiesDetail({ id, navigate }) {
                   <button
                     type="submit"
                     disabled={saving}
-                    className="px-4 py-2 rounded-md bg-cyan-600 text-white text-sm font-medium shadow hover:bg-cyan-700 disabled:opacity-60"
+                    className="px-4 py-2 rounded-md bg-cyan-700 text-white text-sm font-medium shadow hover:bg-cyan-900 disabled:opacity-60"
                   >
                     {saving ? "Saving…" : "Save changes"}
                   </button>

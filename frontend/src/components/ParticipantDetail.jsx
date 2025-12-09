@@ -269,13 +269,14 @@ export default function ParticipantDetail({ id, navigate }) {
                 />
               </div>
               <div>
-                <label className="block text-xs text-gray-600">Notes</label>
+                <label className="block text-xs text-gray-600">Notes
                 <textarea
                   value={form.notes}
                   onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
                   className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                   rows={4}
                 />
+                </label>
               </div>
 
               {saveError && <div className="text-sm text-red-600">{saveError}</div>}
@@ -291,7 +292,7 @@ export default function ParticipantDetail({ id, navigate }) {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-md bg-cyan-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-cyan-700 disabled:opacity-60"
+                  className="rounded-md bg-cyan-700 px-4 py-2 text-sm font-medium text-white shadow hover:bg-cyan-900 disabled:opacity-60"
                   disabled={saving}
                 >
                   {saving ? "Saving…" : "Save changes"}
