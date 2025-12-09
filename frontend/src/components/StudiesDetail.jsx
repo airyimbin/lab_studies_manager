@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { apiJson } from "../utils/api";
 import PropTypes from "prop-types";
+import { apiJson } from "../utils/api";
+import EditStudyModal from "./EditStudyModal";
 
 export default function StudiesDetail({ id, navigate }) {
   const [study, setStudy] = useState(null);
@@ -8,13 +9,6 @@ export default function StudiesDetail({ id, navigate }) {
   const [error, setError] = useState(null);
 
   const [showEditModal, setShowEditModal] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [editForm, setEditForm] = useState({
-    title: "",
-    tags: "",
-    description: "",
-    status: "draft",
-  });
 
   useEffect(() => {
     if (!showEditModal) return undefined;
@@ -36,12 +30,6 @@ export default function StudiesDetail({ id, navigate }) {
       try {
         const data = await apiJson(`/studies/${id}`, "GET");
         setStudy(data);
-        setEditForm({
-          title: data.title || "",
-          tags: data.tags?.join(", ") || "",
-          description: data.description || "",
-          status: data.status || "draft",
-        });
         setError(null);
       } catch (err) {
         console.error("Failed to fetch study", err);
@@ -53,33 +41,11 @@ export default function StudiesDetail({ id, navigate }) {
     if (id) fetchStudy();
   }, [id]);
 
-  // Save changes
-  const saveEdit = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-
-    const payload = {
-      title: editForm.title,
-      description: editForm.description,
-      status: editForm.status, // ✅ Include status update
-      tags: editForm.tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-    };
-
-    try {
-      await apiJson(`/studies/${id}`, "PUT", payload);
-      setShowEditModal(false);
-      const updated = await apiJson(`/studies/${id}`, "GET");
+  const handleStudySaved = React.useCallback((updated) => {
+    if (updated) {
       setStudy(updated);
-    } catch (err) {
-      alert("Failed to save study");
-      console.error(err);
-    } finally {
-      setSaving(false);
     }
-  };
+  }, []);
 
   if (loading) return <p className="p-6 text-gray-600">Loading study details…</p>;
   if (error) return <p className="p-6 text-red-600">{error}</p>;
@@ -162,99 +128,12 @@ export default function StudiesDetail({ id, navigate }) {
         )}
       </div>
 
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
-          style={{ marginTop: "unset" }}
-          onClick={() => setShowEditModal(false)}
-        >
-          <div
-            className="relative w-full max-w-lg mx-auto rounded-xl bg-white p-6 shadow-lg"
-            onClick={(event) => event.stopPropagation()}
-          >
-              <h2 className="text-lg font-semibold text-gray-900">Edit Study</h2>
-              <form onSubmit={saveEdit} className="mt-4 space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                    Title
-                  <input
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                    value={editForm.title}
-                    onChange={(e) =>
-                      setEditForm((f) => ({ ...f, title: e.target.value }))
-                    }
-                    required
-                  />
-                  </label>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                    Tags
-                  </label>
-                  <input
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                    value={editForm.tags}
-                    onChange={(e) =>
-                      setEditForm((f) => ({ ...f, tags: e.target.value }))
-                    }
-                    placeholder="vision, perception"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                    Status
-                  <select
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
-                    value={editForm.status}
-                    onChange={(e) =>
-                      setEditForm((f) => ({ ...f, status: e.target.value }))
-                    }
-                  >
-                    <option value="active">Active</option>
-                    <option value="draft">Draft</option>
-                    <option value="archived">Archived</option>
-                  </select>
-                  </label>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                    rows={4}
-                    value={editForm.description}
-                    onChange={(e) =>
-                      setEditForm((f) => ({ ...f, description: e.target.value }))
-                    }
-                    placeholder="A short paragraph about the protocol..."
-                  />
-                </div>
-
-                <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowEditModal(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={saving}
-                    className="px-4 py-2 rounded-md bg-cyan-700 text-white text-sm font-medium shadow hover:bg-cyan-900 disabled:opacity-60"
-                  >
-                    {saving ? "Saving…" : "Save changes"}
-                  </button>
-                </div>
-              </form>
-          </div>
-        </div>
-      )}
+      <EditStudyModal
+        open={showEditModal}
+        study={study}
+        onClose={() => setShowEditModal(false)}
+        onSaved={handleStudySaved}
+      />
     </div>
   );
 }

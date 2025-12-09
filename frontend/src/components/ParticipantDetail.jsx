@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { apiJson } from "../utils/api";
+import EditParticipantModal from "./EditParticipantModal";
 
 function formatDate(value) {
   if (!value) return "—";
@@ -16,15 +17,6 @@ export default function ParticipantDetail({ id, navigate }) {
   const [loading, setLoading] = React.useState(Boolean(id));
   const [error, setError] = React.useState(null);
   const [showEdit, setShowEdit] = React.useState(false);
-  const [form, setForm] = React.useState({
-    name: "",
-    email: "",
-    phone: "",
-    notes: "",
-    externalId: "",
-  });
-  const [saving, setSaving] = React.useState(false);
-  const [saveError, setSaveError] = React.useState(null);
 
   React.useEffect(() => {
     if (!showEdit) return undefined;
@@ -70,17 +62,6 @@ export default function ParticipantDetail({ id, navigate }) {
     loadParticipant();
   }, [loadParticipant]);
 
-  React.useEffect(() => {
-    if (!participant) return;
-    setForm({
-      name: participant.name || "",
-      email: participant.email || "",
-      phone: participant.phone || "",
-      notes: participant.notes || "",
-      externalId: participant.externalId || "",
-    });
-  }, [participant]);
-
   const handleBack = React.useCallback(() => {
     if (typeof navigate === "function") {
       navigate("/participants");
@@ -91,28 +72,11 @@ export default function ParticipantDetail({ id, navigate }) {
     }
   }, [navigate]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (!id) return;
-    setSaving(true);
-    setSaveError(null);
-    try {
-      const payload = {
-        name: form.name || null,
-        email: form.email || null,
-        phone: form.phone || null,
-        notes: form.notes || null,
-        externalId: form.externalId || null,
-      };
-      const updated = await apiJson(`/participants/${id}`, "PUT", payload);
+  const handleParticipantSaved = React.useCallback((updated) => {
+    if (updated) {
       setParticipant(updated);
-      setShowEdit(false);
-    } catch (err) {
-      setSaveError(err.message || "Failed to update participant");
-    } finally {
-      setSaving(false);
     }
-  };
+  }, []);
 
   return (
     <div className="min-h-screen w-full px-6 py-8 mx-auto max-w-4xl">
@@ -221,87 +185,12 @@ export default function ParticipantDetail({ id, navigate }) {
         </div>
       )}
 
-      {showEdit && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setShowEdit(false)} />
-          <div className="relative z-10 w-full max-w-xl mx-4 rounded-xl bg-white p-6 shadow-lg">
-            <h2 className="text-lg font-semibold text-gray-900">Update participant</h2>
-            <p className="text-sm text-gray-500 mt-1">Edit the participant&apos;s information and save changes.</p>
-
-            <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
-              <div>
-                <label className="block text-xs text-gray-600">Full name</label>
-                <input
-                  value={form.name}
-                  onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                  placeholder="Jane Doe"
-                />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-xs text-gray-600">Email</label>
-                  <input
-                    value={form.email}
-                    onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
-                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                    placeholder="jane@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-600">Phone</label>
-                  <input
-                    value={form.phone}
-                    onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
-                    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                    placeholder="(555) 012-3456"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600">External ID</label>
-                <input
-                  value={form.externalId}
-                  readOnly
-                  className="mt-1 w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600"
-                  placeholder="P-00001"
-                  aria-readonly="true"
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-gray-600">Notes
-                <textarea
-                  value={form.notes}
-                  onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                  rows={4}
-                />
-                </label>
-              </div>
-
-              {saveError && <div className="text-sm text-red-600">{saveError}</div>}
-
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowEdit(false)}
-                  className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-                  disabled={saving}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-cyan-700 px-4 py-2 text-sm font-medium text-white shadow hover:bg-cyan-900 disabled:opacity-60"
-                  disabled={saving}
-                >
-                  {saving ? "Saving…" : "Save changes"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <EditParticipantModal
+        open={showEdit}
+        participant={participant}
+        onClose={() => setShowEdit(false)}
+        onSaved={handleParticipantSaved}
+      />
     </div>
   );
 }
