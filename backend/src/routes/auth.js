@@ -1,12 +1,9 @@
 // backend/src/routes/auth.js
 import { Router } from "express";
 import { getDB } from "../db.js";
-import bcrypt from "bcrypt";                     // ✅ use real bcrypt only
-import {
-  setAuthCookie,
-  clearAuthCookie,
-  requireAuth,
-} from "../utils/auth.js";
+import bcrypt from "bcrypt"; // ✅ use real bcrypt only
+import { setAuthCookie, clearAuthCookie, requireAuth } from "../utils/auth.js";
+import passport from "passport";
 
 const router = Router();
 
@@ -55,32 +52,40 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// ---------------------- LOGIN ----------------------
-router.post("/login", async (req, res) => {
-  try {
-    const db = getDB();
-    const { email, password } = req.body;
-    console.log(email, password)
-    const user = await db.collection("users").findOne({ email });
-    if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
+// // ---------------------- LOGIN ----------------------
+// router.post("/login", async (req, res) => {
+//   try {
+//     const db = getDB();
+//     const { email, password } = req.body;
+//     console.log(email, password)
+//     const user = await db.collection("users").findOne({ email });
+//     if (!user) {
+//       return res.status(401).json({ error: "Invalid email or password" });
+//     }
 
-    const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
+//     const ok = await bcrypt.compare(password, user.passwordHash);
+//     if (!ok) {
+//       return res.status(401).json({ error: "Invalid email or password" });
+//     }
 
-    // ✅ ensure _id is in token
-    setAuthCookie(res, { ...user, _id: user._id });
+//     // ✅ ensure _id is in token
+//     setAuthCookie(res, { ...user, _id: user._id });
 
-    res.json({ ok: true });
+//     res.json({ ok: true });
 
-  } catch (err) {
-    console.error("LOGIN ERROR:", err);
-    res.status(500).json({ error: err.message || "Login failed" });
-  }
-});
+//   } catch (err) {
+//     console.error("LOGIN ERROR:", err);
+//     res.status(500).json({ error: err.message || "Login failed" });
+//   }
+// });
+
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+  })
+);
 
 // ---------------------- LOGOUT ----------------------
 router.post("/logout", (req, res) => {

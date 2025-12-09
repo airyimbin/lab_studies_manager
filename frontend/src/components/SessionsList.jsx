@@ -9,6 +9,7 @@ const PAGE_SIZE = 10;
 export default function SessionsList({ navigate }) {
   const [sessions, setSessions] = useState([]);
   const [filter, setFilter] = useState("All");
+  const [search, setSearch] = useState(""); // 🔍 NEW
   const [loading, setLoading] = useState(true);
 
   const [page, setPage] = useState(1);
@@ -58,20 +59,36 @@ export default function SessionsList({ navigate }) {
 
   const filtered = useMemo(() => {
     const now = new Date();
+    const query = search.trim().toLowerCase();
+
     return sessions.filter((s) => {
       const created = new Date(s.createdAt);
-      if (filter === "New")
-        return (now - created) / (1000 * 60 * 60 * 24) <= 7;
-      if (filter === "This Week") {
+
+      // Date filter
+      if (filter === "New") {
+        const daysDiff = (now - created) / (1000 * 60 * 60 * 24);
+        if (daysDiff > 7) return false;
+      } else if (filter === "This Week") {
         const start = new Date(now);
         start.setDate(now.getDate() - now.getDay());
         const end = new Date(start);
         end.setDate(start.getDate() + 6);
-        return created >= start && created <= end;
+        if (created < start || created > end) return false;
       }
+
+      // Text search filter (Participant + Study)
+      if (query) {
+        const participantName = (s.participantName || "").toLowerCase();
+        const studyName = (s.studyName || "").toLowerCase();
+        const matchesParticipant = participantName.includes(query);
+        const matchesStudy = studyName.includes(query);
+
+        if (!matchesParticipant && !matchesStudy) return false;
+      }
+
       return true;
     });
-  }, [sessions, filter]);
+  }, [sessions, filter, search]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);
@@ -101,7 +118,8 @@ export default function SessionsList({ navigate }) {
   };
 
   const markStatus = async (id, status) => {
-    if (status === "Cancelled" && !window.confirm("Cancel this session?")) return;
+    if (status === "Cancelled" && !window.confirm("Cancel this session?"))
+      return;
     await apiJson(`/sessions/${id}`, "PUT", { status });
     fetchSessions();
   };
@@ -117,23 +135,45 @@ export default function SessionsList({ navigate }) {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {FILTERS.map((f) => (
-            <button
-              key={f}
-              onClick={() => {
-                setFilter(f);
+        <div className="flex flex-wrap items-end gap-3">
+          {/* 🔽 Filter dropdown */}
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">
+              Filter by date
+            </label>
+            <select
+              value={filter}
+              onChange={(e) => {
+                setFilter(e.target.value);
                 setPage(1);
               }}
-              className={`px-4 py-2 rounded-md text-sm font-medium ${
-                filter === f
-                  ? "bg-indigo-600 text-white"
-                  : "bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
-              }`}
+              className="px-3 py-2 rounded-md border border-gray-300 text-sm bg-white"
             >
-              {f}
-            </button>
-          ))}
+              {FILTERS.map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 🔍 Search input */}
+          <div className="w-full md:w-64">
+            <label className="block text-xs text-gray-500 mb-1">
+              Search by participant or study
+            </label>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Search…"
+              className="w-full px-3 py-2 rounded-md border border-gray-300 text-sm"
+            />
+          </div>
+
           <button
             onClick={() => setShowNew(true)}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow hover:bg-indigo-700"
@@ -162,7 +202,10 @@ export default function SessionsList({ navigate }) {
       {loading && (
         <div className="grid gap-4 sm:grid-cols-2">
           {Array.from({ length: 2 }).map((_, index) => (
-            <div key={index} className="h-32 rounded-xl border border-gray-200 bg-white shadow animate-pulse" />
+            <div
+              key={index}
+              className="h-32 rounded-xl border border-gray-200 bg-white shadow animate-pulse"
+            />
           ))}
         </div>
       )}
@@ -170,7 +213,9 @@ export default function SessionsList({ navigate }) {
       {!loading && filtered.length === 0 && (
         <div className="text-center p-10 mx-auto max-w-md rounded-xl bg-white border border-gray-200 shadow">
           <p className="text-lg font-medium text-gray-700">No sessions found</p>
-          <p className="text-sm text-gray-500 mt-1">Try adjusting your filters.</p>
+          <p className="text-sm text-gray-500 mt-1">
+            Try adjusting your filters.
+          </p>
         </div>
       )}
 
@@ -198,11 +243,14 @@ export default function SessionsList({ navigate }) {
                       minute: "2-digit",
                     })
                   : "N/A";
-                const sid = s.sid || (s._id ? s._id.slice(-4).toUpperCase() : "—");
+                const sid =
+                  s.sid || (s._id ? s._id.slice(-4).toUpperCase() : "—");
 
                 return (
                   <tr key={s._id} className="hover:bg-gray-50 transition">
-                    <td className="px-4 py-3 font-medium text-gray-900">S-{sid}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">
+                      S-{sid}
+                    </td>
                     <td className="px-4 py-3 text-gray-700">{dateStr}</td>
                     <td className="px-4 py-3 text-gray-700">{timeStr}</td>
                     <td className="px-4 py-3 text-gray-700">
@@ -386,7 +434,10 @@ NewSessionModal.propTypes = {
   form: PropTypes.shape({
     participantId: PropTypes.string,
     studyId: PropTypes.string,
-    startedAt: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+    startedAt: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.instanceOf(Date),
+    ]),
     notes: PropTypes.string,
   }).isRequired,
   setForm: PropTypes.func.isRequired,

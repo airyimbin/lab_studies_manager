@@ -9,6 +9,8 @@ import sessionsRoutes from "./routes/sessions.js";
 import participantsRoutes from "./routes/participants.js";
 import studiesRoutes from "./routes/studies.js";
 import { requireAuth, readUserFromReq } from "./utils/auth.js";
+import passport from "../config/passport.js";
+import session from "express-session";
 
 dotenv.config();
 const app = express();
@@ -17,8 +19,17 @@ const PORT = process.env.PORT || 3000;
 app.set("trust proxy", true);
 
 // ✅ Built-in middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'default_secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: process.env.NODE_ENV === 'production' }
+}));    
+
 app.use(express.json());
 app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());  
 
 // ✅ Healthcheck (no auth needed)
 app.get("/api/health", (req, res) => res.json({ ok: true }));
