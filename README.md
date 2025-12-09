@@ -1,5 +1,5 @@
 # Lab Studies Manager
-## CS5610 Project 3 Lab Studies Manager
+## CS5610 Final Project Lab Studies Manager
 
 The Lab Studies Manager is built with **Node**, **Express**, **MongoDB**, and **React** frontend.
 The Lab Studies Manager is a one stop website to manage your participants list and scheduling web app to be able to conveniently check everything you need instead of managing an unweildy spreadsheet.
@@ -74,6 +74,7 @@ Then open http://localhost:5173
 <img width="2558" height="1461" alt="Screenshot 2025-11-10 135249" src="https://github.com/user-attachments/assets/5cf10891-91f9-4cc3-b4b4-86c4de5cf06e" />
 <img width="2558" height="1463" alt="Screenshot 2025-11-10 135228" src="https://github.com/user-attachments/assets/e852a360-82c6-4ba7-a3f8-02e44bf90316" />
 <img width="2559" height="1461" alt="Screenshot 2025-11-10 135212" src="https://github.com/user-attachments/assets/1c07238f-d86b-4500-8697-4bf98b8a07c3" />
+
 
 
 
