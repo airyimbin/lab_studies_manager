@@ -247,7 +247,11 @@ export default function NewSessionModal({ open, onClose, onCreated }) {
 
         {/* Actions */}
         <div className="flex justify-end gap-2 pt-2">
-          <button type="button" onClick={onClose} className="px-4 py-2 rounded-md border border-gray-300 text-sm">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 rounded-md bg-red-600 text-sm font-medium text-white shadow hover:bg-red-700"
+          >
             Cancel
           </button>
           <button

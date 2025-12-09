@@ -134,7 +134,7 @@ export default function EditStudyModal({ open, study, onClose, onSaved }) {
             <button
               type="button"
               onClick={() => !closeDisabled && onClose()}
-              className="px-4 py-2 border border-gray-300 rounded-md text-sm"
+              className="px-4 py-2 rounded-md bg-red-600 text-sm font-medium text-white shadow hover:bg-red-700 disabled:opacity-60"
               disabled={closeDisabled}
             >
               Cancel

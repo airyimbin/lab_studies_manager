@@ -106,7 +106,7 @@ export default function NewParticipantModal({ open, onClose, onCreated }) {
             <button
               type="button"
               onClick={() => !submitting && onClose()}
-              className="rounded-md px-3 py-2 text-sm border border-gray-300"
+              className="rounded-md px-3 py-2 text-sm bg-red-600 text-white shadow hover:bg-red-700 disabled:opacity-60"
               disabled={submitting}
             >
               Cancel

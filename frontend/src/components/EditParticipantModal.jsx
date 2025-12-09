@@ -129,7 +129,7 @@ export default function EditParticipantModal({ open, participant, onClose, onSav
             <button
               type="button"
               onClick={() => !closeDisabled && onClose()}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white shadow hover:bg-red-700 disabled:opacity-60"
               disabled={closeDisabled}
             >
               Cancel
