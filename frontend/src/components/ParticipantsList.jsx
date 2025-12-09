@@ -137,48 +137,58 @@ export default function ParticipantsList({ navigate }) {
           <p className="text-sm text-gray-600 mt-1">View all study participants</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 md:justify-end">
-          <input
-            className="w-64 border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 outline-none"
-            placeholder="Search participants..."
-            value={q}
-            onChange={e => setQ(e.target.value)}
-          />
+        <div className="flex flex-col gap-2 md:items-end">
+          <div className="flex flex-wrap items-end gap-3 md:flex-nowrap">
+            <input
+              className="flex-1 min-w-[220px] border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 outline-none md:max-w-xs"
+              placeholder="Search participants..."
+              value={q}
+              onChange={e => setQ(e.target.value)}
+            />
 
-          <select
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 outline-none"
-            value={sort}
-            onChange={e => setSort(e.target.value)}
-          >
-            {sortOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-
-          <button
-            onClick={() => setShowNew(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-3 py-2 text-sm font-medium shadow hover:bg-indigo-700"
-          >
-            <svg
-              aria-hidden="true"
-              focusable="false"
-              className="h-4 w-4"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            <label
+              htmlFor="participants-sort"
+              className="flex flex-col text-xs font-semibold text-gray-600"
             >
-              <path
-                d="M10 4v12m6-6H4"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span>New Participant</span>
-          </button>
+              Sort
+              <select
+                id="participants-sort"
+                className="mt-1 border border-gray-300 rounded-lg px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 outline-none"
+                value={sort}
+                onChange={e => setSort(e.target.value)}
+              >
+                {sortOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <button
+              onClick={() => setShowNew(true)}
+              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 text-white px-3 py-2 text-sm font-medium shadow hover:bg-indigo-700"
+              style={{ paddingTop: "10px", paddingBottom: "8px", borderBottomWidth: "1px" }}
+            >
+              <svg
+                aria-hidden="true"
+                focusable="false"
+                className="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M10 4v12m6-6H4"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span>New Participant</span>
+            </button>
+          </div>
         </div>
       </div>
 

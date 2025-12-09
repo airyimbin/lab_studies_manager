@@ -7,7 +7,7 @@ function StatusBadge({ status }) {
   const map = {
     Sch: { text: "Scheduled", dot: "bg-blue-500" },
     Scheduled: { text: "Scheduled", dot: "bg-blue-500" },
-    Completed: { text: "Completed", dot: "bg-green-600" },
+    Completed: { text: "Completed", dot: "bg-emerald-600" },
     Cancelled: { text: "Cancelled", dot: "bg-red-600" },
     Canceled: { text: "Cancelled", dot: "bg-red-600" },
   };
@@ -71,21 +71,6 @@ export default function SessionsDetail({ id, navigate }) {
     await load();
   };
 
-  // ✅ Delete session
-  const deleteSession = async () => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this session?"
-    );
-    if (!confirmed) return;
-    try {
-      await apiJson(`/sessions/${id}`, "DELETE");
-      navigate("/sessions");
-    } catch (err) {
-      console.error("Failed to delete session:", err);
-      alert("Failed to delete session.");
-    }
-  };
-
   if (loading) return <div className="p-6">Loading session…</div>;
   if (!session) return <div className="p-6">Not found.</div>;
 
@@ -130,21 +115,15 @@ export default function SessionsDetail({ id, navigate }) {
           <div className="flex gap-2">
             <button
               onClick={markCompleted}
-              className="px-4 py-2 rounded-md border border-indigo-600 text-indigo-600 text-sm font-medium hover:bg-indigo-50"
+              className="px-4 py-2 rounded-md bg-emerald-600 text-white text-sm font-medium shadow hover:bg-emerald-700"
             >
               Mark completed
             </button>
             <button
               onClick={cancelSession}
-              className="px-4 py-2 rounded-md bg-yellow-500 text-white text-sm font-medium hover:bg-yellow-600"
+              className="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-medium shadow hover:bg-red-700"
             >
               Cancel
-            </button>
-            <button
-              onClick={deleteSession}
-              className="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-medium hover:bg-red-700"
-            >
-              Delete
             </button>
           </div>
         </div>

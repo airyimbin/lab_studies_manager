@@ -17,6 +17,20 @@ export default function StudiesDetail({ id, navigate }) {
   });
 
   useEffect(() => {
+    if (!showEditModal) return undefined;
+    const handler = (event) => {
+      if (event.key === "Escape") {
+        setShowEditModal(false);
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("keydown", handler);
+      return () => window.removeEventListener("keydown", handler);
+    }
+    return undefined;
+  }, [showEditModal]);
+
+  useEffect(() => {
     async function fetchStudy() {
       setLoading(true);
       try {
@@ -98,7 +112,7 @@ export default function StudiesDetail({ id, navigate }) {
         <div className="flex gap-2">
           <button
             onClick={() => setShowEditModal(true)}
-            className="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+            className="px-4 py-2 rounded-md bg-cyan-600 text-white text-sm font-medium shadow hover:bg-cyan-700"
           >
             Edit Study
           </button>
@@ -149,92 +163,94 @@ export default function StudiesDetail({ id, navigate }) {
 
       {/* Edit Modal */}
       {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
+          style={{ marginTop: "unset" }}
+          onClick={() => setShowEditModal(false)}
+        >
           <div
-            className="absolute inset-0 bg-black/30"
-            onClick={() => setShowEditModal(false)}
-          />
-          <div className="relative z-10 bg-white rounded-xl shadow-lg w-full max-w-lg mx-4 p-6">
-            <h2 className="text-lg font-semibold text-gray-900">Edit Study</h2>
-            <form onSubmit={saveEdit} className="mt-4 space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                  Title
-                </label>
-                <input
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                  value={editForm.title}
-                  onChange={(e) =>
-                    setEditForm((f) => ({ ...f, title: e.target.value }))
-                  }
-                  required
-                />
-              </div>
+            className="relative w-full max-w-lg mx-auto rounded-xl bg-white p-6 shadow-lg"
+            onClick={(event) => event.stopPropagation()}
+          >
+              <h2 className="text-lg font-semibold text-gray-900">Edit Study</h2>
+              <form onSubmit={saveEdit} className="mt-4 space-y-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+                    Title
+                  </label>
+                  <input
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    value={editForm.title}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, title: e.target.value }))
+                    }
+                    required
+                  />
+                </div>
 
-              <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                  Tags
-                </label>
-                <input
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                  value={editForm.tags}
-                  onChange={(e) =>
-                    setEditForm((f) => ({ ...f, tags: e.target.value }))
-                  }
-                  placeholder="vision, perception"
-                />
-              </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+                    Tags
+                  </label>
+                  <input
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    value={editForm.tags}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, tags: e.target.value }))
+                    }
+                    placeholder="vision, perception"
+                  />
+                </div>
 
-              {/* ✅ STATUS FIELD */}
-              <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                  Status
-                </label>
-                <select
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
-                  value={editForm.status}
-                  onChange={(e) =>
-                    setEditForm((f) => ({ ...f, status: e.target.value }))
-                  }
-                >
-                  <option value="active">Active</option>
-                  <option value="draft">Draft</option>
-                  <option value="archived">Archived</option>
-                </select>
-              </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+                    Status
+                  </label>
+                  <select
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
+                    value={editForm.status}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, status: e.target.value }))
+                    }
+                  >
+                    <option value="active">Active</option>
+                    <option value="draft">Draft</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </div>
 
-              <div>
-                <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
-                  Description
-                </label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
-                  rows={4}
-                  value={editForm.description}
-                  onChange={(e) =>
-                    setEditForm((f) => ({ ...f, description: e.target.value }))
-                  }
-                  placeholder="A short paragraph about the protocol..."
-                />
-              </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+                    Description
+                  </label>
+                  <textarea
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    rows={4}
+                    value={editForm.description}
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, description: e.target.value }))
+                    }
+                    placeholder="A short paragraph about the protocol..."
+                  />
+                </div>
 
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-60"
-                >
-                  {saving ? "Saving…" : "Save changes"}
-                </button>
-              </div>
-            </form>
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="px-4 py-2 rounded-md bg-cyan-600 text-white text-sm font-medium shadow hover:bg-cyan-700 disabled:opacity-60"
+                  >
+                    {saving ? "Saving…" : "Save changes"}
+                  </button>
+                </div>
+              </form>
           </div>
         </div>
       )}

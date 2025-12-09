@@ -365,14 +365,14 @@ export default function Dashboard({ navigate }) {
                                       onClick={() => {
                                         if (!session.endedAt) handleMarkDone(session._id);
                                       }}
-                                      className="rounded-lg bg-indigo-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-indigo-700 disabled:opacity-60"
+                                      className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
                                       disabled={Boolean(session.endedAt) || Boolean(savingSessions[session._id])}
                                     >
                                       {session.endedAt
                                         ? "Complete"
                                         : savingSessions[session._id]
                                         ? "Saving…"
-                                        : "Mark done"}
+                                        : "Mark Session Complete"}
                                     </button>
                                   </div>
                                 </td>
@@ -445,14 +445,14 @@ export default function Dashboard({ navigate }) {
                                 onClick={() => {
                                   if (!session.endedAt) handleMarkDone(session._id);
                                 }}
-                                className="rounded-lg bg-indigo-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-indigo-700 disabled:opacity-60"
+                                className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-emerald-700 disabled:opacity-60"
                                 disabled={Boolean(session.endedAt) || Boolean(savingSessions[session._id])}
                               >
                                 {session.endedAt
                                   ? "Complete"
                                   : savingSessions[session._id]
                                   ? "Saving…"
-                                  : "Mark done"}
+                                  : "Mark Session Complete"}
                               </button>
                             </div>
                           </td>

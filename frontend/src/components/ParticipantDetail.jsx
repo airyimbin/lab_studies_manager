@@ -26,6 +26,20 @@ export default function ParticipantDetail({ id, navigate }) {
   const [saving, setSaving] = React.useState(false);
   const [saveError, setSaveError] = React.useState(null);
 
+  React.useEffect(() => {
+    if (!showEdit) return undefined;
+    const handler = (event) => {
+      if (event.key === "Escape") {
+        setShowEdit(false);
+      }
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("keydown", handler);
+      return () => window.removeEventListener("keydown", handler);
+    }
+    return undefined;
+  }, [showEdit]);
+
   const loadParticipant = React.useCallback(async () => {
     if (!id) {
       setError(new Error("Missing participant id"));
@@ -134,7 +148,7 @@ export default function ParticipantDetail({ id, navigate }) {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowEdit(true)}
-                  className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700"
+                  className="inline-flex items-center justify-center rounded-lg bg-cyan-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-cyan-700"
                 >
                   Update info
                 </button>
@@ -247,9 +261,10 @@ export default function ParticipantDetail({ id, navigate }) {
                 <label className="block text-xs text-gray-600">External ID</label>
                 <input
                   value={form.externalId}
-                  onChange={(e) => setForm((prev) => ({ ...prev, externalId: e.target.value }))}
-                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  readOnly
+                  className="mt-1 w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600"
                   placeholder="P-00001"
+                  aria-readonly="true"
                 />
               </div>
               <div>
@@ -275,7 +290,7 @@ export default function ParticipantDetail({ id, navigate }) {
                 </button>
                 <button
                   type="submit"
-                  className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                  className="rounded-md bg-cyan-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-cyan-700 disabled:opacity-60"
                   disabled={saving}
                 >
                   {saving ? "Saving…" : "Save changes"}
