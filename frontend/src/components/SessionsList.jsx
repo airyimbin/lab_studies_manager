@@ -177,6 +177,7 @@ export default function SessionsList({ navigate }) {
           <button
             onClick={() => setShowNew(true)}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 text-white text-sm font-medium shadow hover:bg-indigo-700"
+            style={{ paddingTop: "10px", paddingBottom: "8px", borderBottomWidth: "1px" }}
           >
             <svg
               aria-hidden="true"
