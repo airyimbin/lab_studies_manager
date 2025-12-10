@@ -138,9 +138,8 @@ export default function SessionsList({ navigate }) {
         <div className="flex flex-wrap items-end gap-3">
           {/* 🔽 Filter dropdown */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">
+            <label className="flex flex-col text-xs block text-gray-500">
               Filter by date
-            </label>
             <select
               value={filter}
               onChange={(e) => {
@@ -155,13 +154,13 @@ export default function SessionsList({ navigate }) {
                 </option>
               ))}
             </select>
+            </label>
           </div>
 
           {/* 🔍 Search input */}
           <div className="w-full md:w-64">
-            <label className="block text-xs text-gray-500 mb-1">
+            <label className="flex flex-col text-xs block text-gray-500">
               Search by participant or study
-            </label>
             <input
               type="text"
               value={search}
@@ -172,6 +171,7 @@ export default function SessionsList({ navigate }) {
               placeholder="Search…"
               className="w-full px-3 py-2 rounded-md border border-gray-300 text-sm"
             />
+            </label>
           </div>
 
           <button

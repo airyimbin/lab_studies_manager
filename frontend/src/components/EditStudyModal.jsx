@@ -68,7 +68,9 @@ export default function EditStudyModal({ open, study, onClose, onSaved }) {
   const closeDisabled = saving;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ marginTop: "unset" }}
+    >
       <div
         className="absolute inset-0 bg-black/40"
         onClick={() => !closeDisabled && onClose()}
@@ -77,33 +79,32 @@ export default function EditStudyModal({ open, study, onClose, onSaved }) {
         <h2 className="text-lg font-semibold text-gray-900">Edit Study</h2>
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+            <label className="block text-xs uppercase mb-1">
               Title
-            </label>
             <input
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={form.title}
               onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
               required
             />
+            </label>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+            <label className="block text-xs uppercase mb-1">
               Tags
-            </label>
             <input
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
               value={form.tags}
               onChange={(e) => setForm((prev) => ({ ...prev, tags: e.target.value }))}
               placeholder="vision, perception"
             />
+            </label>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+            <label className="block text-xs uppercase mb-1">
               Status
-            </label>
             <select
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
               value={form.status}
@@ -113,12 +114,12 @@ export default function EditStudyModal({ open, study, onClose, onSaved }) {
               <option value="draft">Draft</option>
               <option value="archived">Archived</option>
             </select>
+            </label>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-500 uppercase mb-1">
+            <label className="block text-xs uppercase mb-1">
               Description
-            </label>
             <textarea
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
               rows={4}
@@ -126,6 +127,7 @@ export default function EditStudyModal({ open, study, onClose, onSaved }) {
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
               placeholder="A short paragraph about the protocol..."
             />
+            </label>
           </div>
 
           {error && <div className="text-sm text-red-600">{error}</div>}
